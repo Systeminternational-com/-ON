@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Startup Team Management Platform</title>
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#F2F2F7">
+
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/views.css">
+</head>
+<body>
+
+  <!-- Toast Notification Center -->
+  <div id="toast-container"></div>
+
+  <!-- AUTHENTICATION GATE VIEW -->
+  <div id="auth-view" style="display: flex; height: 100vh; width: 100vw; align-items: center; justify-content: center; background: var(--bg-app); position: fixed; inset: 0; z-index: 1000;">
+    
+    <!-- Login Screen Dark/Light Toggle -->
+    <button id="login-theme-toggle" class="btn btn-icon btn-secondary" title="Switch Theme" style="position: absolute; top: 20px; right: 20px; z-index: 10;">
+      🌙
+    </button>
+
+    <div class="card" style="width: 100%; max-width: 380px; padding: 36px 24px; text-align: center; margin: 16px; box-shadow: var(--shadow-lg);">
+      
+      <!-- LOGO IMAGE CONTAINER -->
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 16px;">
+        <img 
+          id="app-logo" 
+          src="logo.png" 
+          alt="Logo" 
+          style="width: 72px; height: 72px; object-fit: contain; border-radius: 16px;" 
+          onerror="this.style.display='none'; document.getElementById('fallback-logo-badge').style.display='flex';"
+        >
+        <!-- Fallback if image not yet uploaded -->
+        <div id="fallback-logo-badge" class="brand-badge" style="display: none; width: 54px; height: 54px; font-size: 26px; border-radius: 16px;">
+          ⚡
+        </div>
+      </div>
+
+      <h1 style="font-size: 22px; font-weight: 700; letter-spacing: -0.5px;">Startup Workspace</h1>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 24px;">Private Ecosystem for Records & Ops</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Startup Email</label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@startup.com" required autocomplete="email">
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 15px;">Sign In to Workspace</button>
+      </form>
+      
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); font-size: 11px; color: var(--text-tertiary);">
+        Authorized Team Members Only • Access Managed by Administrator
+      </div>
+    </div>
+  </div>
+
+  <!-- RESTRICTED ACCESS MODAL -->
+  <div id="restricted-modal" class="modal-overlay">
+    <div class="modal-sheet" style="max-width: 420px; text-align: center;">
+      <div class="modal-body" style="padding: 32px 24px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--ios-red-light); color: var(--ios-red); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">✕</div>
+        <h3 style="font-size: 19px; font-weight: 700; margin-bottom: 8px;">Authentication Restricted</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 24px;">Your account is not authorized to access this startup workspace. Please contact your administrator to be added to the registry.</p>
+        <button id="restricted-close-btn" class="btn btn-primary" style="width: 100%;">Return to Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN AUTHENTICATED APP SHELL -->
+  <div id="app-container" style="display: none;">
+    
+    <!-- Sidebar Navigation (Desktop) -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge">⚡</div>
+        <div class="brand-info">
+          <h1 id="sidebar-app-title">Startup Team</h1>
+          <span id="sidebar-role-indicator">Workspace</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Operations</div>
+        <a class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+          Dashboard
+        </a>
+        <a class="nav-item" data-view="members">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Team Members
+        </a>
+        <a class="nav-item" data-view="attendance">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Attendance
+        </a>
+        <a class="nav-item" data-view="worklogs">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Work Logs
+        </a>
+        <a class="nav-item" data-view="performance">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Performance & Remarks
+        </a>
+        <a class="nav-item" data-view="updates">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Team Updates
+        </a>
+        <a class="nav-item" data-view="chat">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Messages
+        </a>
+
+        <!-- Admin Only Section -->
+        <div class="admin-only-nav" style="display: none;">
+          <div class="nav-section-title">Administration</div>
+          <a class="nav-item" data-view="reports">
+            <svg viewBox="0 0 24 24"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"></path></svg>
+            Official Reports
+          </a>
+          <a class="nav-item" data-view="audit">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            Audit Log
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">--</div>
+          <div class="user-details">
+            <div class="user-name" id="sidebar-user-name">Loading...</div>
+            <div class="user-role-badge" id="sidebar-user-role">Member</div>
+          </div>
+          <button id="logout-btn" class="btn btn-icon btn-secondary" title="Sign Out" style="width: 32px; height: 32px;">
+            <svg style="width: 16px; height: 16px; stroke: currentColor; fill: none;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content Region -->
+    <div id="main-content">
+      <header id="topbar">
+        <div class="topbar-title-group">
+          <h2 id="page-title">Dashboard</h2>
+          <span class="topbar-subtitle" id="page-subtitle">Welcome back</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="app-theme-toggle" class="btn btn-icon btn-secondary" title="Switch Theme">🌙</button>
+          <div id="topbar-actions-slot"></div>
+        </div>
+      </header>
+
+      <main id="view-container">
+        <div class="state-box">
+          <div class="state-icon">⏳</div>
+          <div class="state-title">Loading Workspace...</div>
+          <div class="state-desc">Connecting with Firestore.</div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Mobile Bottom Tab Bar -->
+    <nav id="bottom-tab-bar">
+      <a class="tab-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        <span>Home</span>
+      </a>
+      <a class="tab-item" data-view="attendance">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+        <span>Attendance</span>
+      </a>
+      <a class="tab-item" data-view="chat">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Chat</span>
+      </a>
+      <a class="tab-item" data-view="updates">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg>
+        <span>Updates</span>
+      </a>
+      <a class="tab-item" data-view="members">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        <span>Team</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- DYNAMIC MODAL CONTAINER -->
+  <div id="global-modal" class="modal-overlay">
+    <div class="modal-sheet" id="global-modal-sheet"></div>
+  </div>
+
+  <!-- Main Application Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
